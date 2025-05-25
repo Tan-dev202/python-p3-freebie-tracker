@@ -1,5 +1,5 @@
-from sqlalchemy import ForeignKey, Column, Integer, String, MetaData, create_engine
-from sqlalchemy.orm import relationship, sessionmaker, declarative_base
+from sqlalchemy import ForeignKey, Column, Integer, String, MetaData
+from sqlalchemy.orm import relationship, declarative_base
 
 convention = {
     "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
