@@ -5,7 +5,7 @@ from sqlalchemy.orm import sessionmaker
 from models import Base, Company, Dev, Freebie
 
 if __name__ == '__main__':
-    engine = create_engine('sqlite:///freebies.db')
+    engine = create_engine('sqlite:///lib/freebies.db')
     Base.metadata.create_all(engine)
     Session = sessionmaker(bind=engine)
     session = Session()
@@ -14,11 +14,11 @@ if __name__ == '__main__':
     devs = session.query(Dev).all()
     freebies = session.query(Freebie).all()
     
-    print("---Testing Freebie Tracker---")
+    print("-----Testing Freebie Tracker-----")
     
-    print(f"Companies: {len(companies)}")
-    print(f"Devs: {len(devs)}")
-    print(f"Freebies: {len(freebies)}")
+    print(f"Total Companies: {len(companies)}")
+    print(f"Total Devs: {len(devs)}")
+    print(f"Total Freebies: {len(freebies)}")
     
     print(f"\nFirst company: {companies[0].name}")
     print(f"    First company's freebies: {[freebie.item_name for freebie in companies[0].freebies]}")
@@ -30,9 +30,9 @@ if __name__ == '__main__':
         
     print(f"\nFirst freebie details: {freebies[0].print_details()}")
         
-    print(f"\nOldest company: {Company.oldest_company().name} (founded {Company.oldest_company().founding_year})")
-    print(f"Does {devs[0].name} have a T-shirt? {devs[0].received_one('T-shirt')}")
-    print(f"Does {devs[0].name} have a Laptop? {devs[0].received_one('Laptop')}")
+    print(f"\nOldest company: {Company.oldest_company(session).name} (founded {Company.oldest_company(session).founding_year})")
+    print(f"Does {devs[0].name} have a Diary? {devs[0].received_one('Diary')}")
+    print(f"Does {devs[0].name} have a Umbrella? {devs[0].received_one('Umbrella')}")
     
 
     moringa = session.query(Company).filter_by(name="Moringa").first()
@@ -59,13 +59,13 @@ if __name__ == '__main__':
     print(f"    Frank's freebies before: {[freebie.item_name for freebie in frank.freebies]}")
     print(f"    Freebie owner before: {andrew_freebie.dev.name}")
     
-    result = andrew.give_away(frank, andrew_freebie)
+    result = andrew.give_away(frank, andrew_freebie, session)
     
     session.refresh(andrew)
     session.refresh(frank) 
     session.refresh(andrew_freebie)
     
-    print(f"\n    Andrew's freebies after: {[freebie.item_name for freebie in andrew.freebies]}")
+    print(f"\n  Andrew's freebies after: {[freebie.item_name for freebie in andrew.freebies]}")
     print(f"    frank's freebies after: {[freebie.item_name for freebie in frank.freebies]}")
     print(f"    Freebie new owner: {andrew_freebie.dev.name}")
     session.commit()

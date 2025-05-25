@@ -8,9 +8,6 @@ metadata = MetaData(naming_convention=convention)
 
 Base = declarative_base(metadata=metadata)
 
-engine = create_engine('sqlite:///freebies.db')
-Session = sessionmaker(bind=engine)
-session = Session()
 class Company(Base):
     __tablename__ = 'companies'
 
@@ -24,7 +21,6 @@ class Company(Base):
         return f'<Company {self.name}>'
     
     def give_freebie(self, dev, item_name, value, session):
-        
         new_freebie = Freebie(
             dev=dev,
             company=self,
@@ -32,11 +28,10 @@ class Company(Base):
             value=value
         )
         session.add(new_freebie)
-        session.commit()
         return new_freebie
     
     @classmethod
-    def oldest_company(cls):
+    def oldest_company(cls, session):
         result = session.query(cls).order_by(cls.founding_year.asc()).first()
         return result
     
@@ -62,12 +57,10 @@ class Dev(Base):
     def received_one(self, item_name):
         return any(freebie.item_name == item_name for freebie in self.freebies)
     
-    def give_away(self, dev, freebie):
+    def give_away(self, dev, freebie, session):
         if freebie in self.freebies:
-            session = Session()
-            
             freebie.dev = dev
-            session.commit()
+            session.add(freebie)
             return True
         return False
 
